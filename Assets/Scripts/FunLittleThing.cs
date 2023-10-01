@@ -8,7 +8,7 @@ public class FunLittleThing : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(GoBack());
+       // StartCoroutine(GoBack());
     }
 
     // Update is called once per frame

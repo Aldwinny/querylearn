@@ -5,74 +5,42 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Rigidbody2D playerRB2D;
-
-    public float jumpStrength = 11;
-    public float walkSpeed = 5;
-    public int position = 1;
-    public bool isMoving = false;
-
-    public GameObject nextLevel;
-    public GameObject congats;
-
-    void Start()
-    {
-        
-    }
+    [SerializeField] private float moveSpeed = 7f;
 
     void Update()
     {
-        if (isMoving)
-        {
-            Move(position * walkSpeed);
+        Vector2 inputVector = new Vector2(0, 0); // By logic, the input is X & Y only so the inputVector is not Vector3 automatically.
+
+        // this is Legacy Input Manager, an old style of programming control:
+
+        if (Input.GetKey(KeyCode.W)) {
+            inputVector.y = -1;
         }
-    }
 
-    public void Jump()
-    {
-        playerRB2D.velocity = Vector2.up * jumpStrength;
-    }
-
-    public void MovePosition(int position)
-    {
-        isMoving = true;
-        this.position = position;
-    }
-
-    public void SetIsMoving()
-    {
-        isMoving = false;
-    }
-
-    public void Move(float velocity)
-    {
-        SpriteRenderer sr = gameObject.GetComponent<SpriteRenderer>();
-        if (velocity > 0)
-        {
-            sr.flipX = false;
-            playerRB2D.velocity = new Vector2(velocity, 0);
-        } else
-        {
-            sr.flipX = true;
-            playerRB2D.velocity = new Vector2(velocity, 0);
+        if (Input.GetKey(KeyCode.S)) {
+            inputVector.y = 1;
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject == GameObject.Find("exclamation button"))
-        {
-            Destroy(collision.gameObject);
-            GameObject.Find("desc").GetComponent<TextMeshProUGUI>().text = "Congrats! Proceeding to level 1..";
-            congats.SetActive(true);
-            StartCoroutine(ExitTutorial());
+        if (Input.GetKey(KeyCode.A)) {
+            inputVector.x = 1;
         }
-    }
 
-    IEnumerator ExitTutorial()
-    {
-        yield return new WaitForSeconds(3);
-        GameObject.Find("Tutorial").SetActive(false);
-        nextLevel.SetActive(true);
+        if (Input.GetKey(KeyCode.D)) {
+            inputVector.x = -1;
+        }
+
+        // There's this problem where moving diagonally makes the character faster
+        // This function call normalizes the vector
+        inputVector = inputVector.normalized;
+
+        // Create Vector3 from Vector2
+        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+
+        // Move the player
+        // DeltaTime should only be multiplied on moving stuff
+        transform.position += moveDir * moveSpeed * Time.deltaTime;
+
+        // Sets the player rotation to movedir
+        float rotateSpeed = 10f;
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
     }
 }
