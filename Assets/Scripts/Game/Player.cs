@@ -1,46 +1,49 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 7f;
 
-    void Update()
-    {
-        Vector2 inputVector = new Vector2(0, 0); // By logic, the input is X & Y only so the inputVector is not Vector3 automatically.
+    private CharacterController controller;
+    private Vector3 playerVelocity;
+    private PlayerInput playerInput;
+    private float gravityValue = 9.81f;
+    private Transform cameraTransform;
 
-        // this is Legacy Input Manager, an old style of programming control:
+    private void Start() {
+        // Initialize controller
+        controller = gameObject.AddComponent<CharacterController>();
 
-        if (Input.GetKey(KeyCode.W)) {
-            inputVector.y = -1;
+        // Initialize Player Input
+        playerInput = gameObject.GetComponent<PlayerInput>();
+        Debug.Log(playerInput);
+
+        cameraTransform = Camera.main.transform;
+    }
+
+    void Update() {
+        
+        // Obtain input information
+        Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
+        Console.WriteLine(input);
+        Vector3 move = new Vector3(input.x, 0, input.y);
+
+        // This
+        move = move.x * cameraTransform.right + move.z * cameraTransform.forward;
+        move.y = 0f;
+        controller.Move(move * Time.deltaTime * moveSpeed);
+
+        // playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+
+        if (input != Vector2.zero) {
+            float rotateSpeed = 10f;
+            transform.forward = Vector3.Slerp(transform.forward, move, Time.deltaTime * rotateSpeed);
         }
-
-        if (Input.GetKey(KeyCode.S)) {
-            inputVector.y = 1;
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            inputVector.x = 1;
-        }
-
-        if (Input.GetKey(KeyCode.D)) {
-            inputVector.x = -1;
-        }
-
-        // There's this problem where moving diagonally makes the character faster
-        // This function call normalizes the vector
-        inputVector = inputVector.normalized;
-
-        // Create Vector3 from Vector2
-        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
-
-        // Move the player
-        // DeltaTime should only be multiplied on moving stuff
-        transform.position += moveDir * moveSpeed * Time.deltaTime;
-
-        // Sets the player rotation to movedir
-        float rotateSpeed = 10f;
-        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
     }
 }
