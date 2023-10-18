@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class LogicManager : MonoBehaviour
 {
 
-    public GameObject activeScreen; // First declaration is the landing screen
+    [SerializeField] private GameObject activeScreen; // First declaration is the landing screen
 
     private void Start()
     {
@@ -30,6 +30,6 @@ public class LogicManager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("Level1");
     }
 }

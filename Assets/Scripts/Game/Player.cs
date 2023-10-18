@@ -31,12 +31,12 @@ public class Player : MonoBehaviour
         // Obtain input information
         Vector2 input = playerInput.actions["Move"].ReadValue<Vector2>();
         Console.WriteLine(input);
-        Vector3 move = new Vector3(input.x, 0, input.y);
+        Vector3 move = new(-input.x, 0, -input.y);
 
         // This
         move = move.x * cameraTransform.right + move.z * cameraTransform.forward;
         move.y = 0f;
-        controller.Move(move * Time.deltaTime * moveSpeed);
+        controller.Move(moveSpeed * Time.deltaTime * move);
 
         // playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);

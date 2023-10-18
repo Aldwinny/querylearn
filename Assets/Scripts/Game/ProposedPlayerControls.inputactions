@@ -22,6 +22,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "MaybeLook",
+                    "type": "Value",
+                    "id": "b0f8d878-aae6-4a1d-9b4a-cd21149d891c",
+                    "expectedControlType": "Vector2",
+                    "processors": "InvertVector2",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -41,9 +50,20 @@
                     "id": "c1141796-5256-4374-9c44-8a74aeae0579",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "InvertVector2",
                     "groups": "",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6fa7b505-f251-4a48-b401-7fc895cd7b32",
+                    "path": "<Touchscreen>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MaybeLook",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
