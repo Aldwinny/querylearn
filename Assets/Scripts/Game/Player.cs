@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumpForce = 7f;
+    [SerializeField] private float simulateGravity = 9.8f;
 
     private CharacterController controller;
     private Vector3 playerVelocity;
@@ -38,24 +39,31 @@ public class Player : MonoBehaviour
         Vector3 move = new(moveInput.x, 0, moveInput.y);
 
         move = move.x * cameraTransform.right + move.z * cameraTransform.forward;
-        move.y = 0f;
+
+        Debug.Log("Grounded 0: " + controller.isGrounded);
+
+        if (jumpInput == 1) {
+            move.y = jumpForce;
+        }
+        // controller.Move(moveSpeed * Time.deltaTime * move);
+
+        Debug.Log("Grounded 1: " + controller.isGrounded);
+
+        // Gravity implementation
+        playerVelocity.y += simulateGravity * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
 
         controller.Move(moveSpeed * Time.deltaTime * move);
 
-        Debug.Log(controller.isGrounded);
-
-        playerVelocity.y += -gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
-        Debug.Log(controller.isGrounded);
 
         // If the player is moving, rotate its model towards the direction its moving to
         if (moveInput != Vector2.zero) {
             float rotateSpeed = 10f;
 
             // Slerp smoothens the rotation of the model
-            transform.forward = Vector3.Slerp(transform.forward, move, Time.deltaTime * rotateSpeed);
+            transform.forward = Vector3.Slerp(transform.forward, new Vector3(move.x, 0, move.z), Time.deltaTime * rotateSpeed);
         }
-        Debug.Log(controller.isGrounded);
+        Debug.Log("Grounded 3: " + controller.isGrounded);
     }
 
 }
